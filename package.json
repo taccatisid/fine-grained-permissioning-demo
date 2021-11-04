@@ -1,0 +1,25 @@
+{
+  "name": "permissioning-demo",
+  "version": "0.0.1",
+  "description": "Demonstrate node and contract permissioning.",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/taccatisid/permissioning-demo.git"
+  },
+  "keywords": [],
+  "author": "ConsenSys Software",
+  "license": "ISC",
+  "dependencies": {
+    "@openzeppelin/contracts": "^4.3.2",
+    "save-dev": "^0.0.1-security",
+    "web3": "1.5.3",
+    "ws": ">5.0.0"
+  },
+  "devDependencies": {
+    "truffle": "5.4.16"
+  }
+}
