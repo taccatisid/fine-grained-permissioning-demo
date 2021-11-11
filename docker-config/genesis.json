@@ -1,34 +1,33 @@
 {
   "config": {
     "chainId": 1981,
-    "constantinoplefixblock": 0,
+    "berlinblock": 0,
     "clique": {
       "blockperiodseconds": 1,
       "epochlength": 30000
     }
   },
-  "coinbase": "0x0000000000000000000000000000000000000000",
+  "coinbase": "0x25a14ecf5ad3178acadc3d2b3b06f77c4940a9c3",
   "difficulty": "0x1",
-  "extraData": "0x000000000000000000000000000000000000000000000000000000000000000064f157d315dbe9e00708d0e82b991467f57a56e10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "extraData": "0x000000000000000000000000000000000000000000000000000000000000000025a14ecf5ad3178acadc3d2b3b06f77c4940a9c30000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
   "gasLimit": "0xa00000",
   "mixHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
   "nonce": "0x0",
   "timestamp": "0x5c51a607",
   "alloc": {
-    "fe3b557e8fb62b89f4916b721be55ceb828dbd73": {
-      "privateKey": "8f2a55949038a9610f50fb23b5883af3b4ecb3c3bb792cbcefbd1542c692be63",
-      "comment": "private key and this comment are ignored.  In a real chain, the private key should NOT be stored",
-      "balance": "0xad78ebc5ac6200000"
+    "D1cf9D73a91DE6630c2bb068Ba5fDdF9F0DEac09": {
+      "comment": "initial deployer and subsequent admin",
+      "balance": "0x10000000000000000000000000000000000000000000000000"
     },
-    "627306090abaB3A6e1400e9345bC60c78a8BEf57": {
-      "privateKey": "c87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3",
-      "comment": "private key and this comment are ignored.  In a real chain, the private key should NOT be stored",
-      "balance": "90000000000000000000000"
+    "8e6bbd65Eaa705bEA1EabD750bFe42BBF497c40f": {
+      "comment": "internal user. In a real chain, the private key should NOT be stored.",
+      "privateKey": "0x911857df738519ad6b51046a89a788a77a8b9e398ab41a36ff435c0532899612",
+      "balance": "0x10000000000000000000000000000000000000000000000000"
     },
-    "f17f52151EbEF6C7334FAD080c5704D77216b732": {
-      "privateKey": "ae6ae8e5ccbfb04590405997ee2d52d2b330726137b875053c36d94e974d162f",
-      "comment": "private key and this comment are ignored.  In a real chain, the private key should NOT be stored",
-      "balance": "90000000000000000000000"
+    "fdCE5d73aFEa75cD646694d82900e8dB7641f8B6": {
+      "comment": "external user. In a real chain, the private key should NOT be stored.",
+      "privateKey": "0x10e9a39581f929f090c6a43d11f6b519974410226e7d97fb1914955d0a0f302d",
+      "balance": "0x10000000000000000000000000000000000000000000000000"
     },
     "0x0000000000000000000000000000000000008888": {
       "comment": "Account Ingress smart contract",

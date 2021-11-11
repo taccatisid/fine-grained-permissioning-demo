@@ -1,40 +1,33 @@
-version: '2'
+version: '3'
 
 x-besu:
   &besu
   image: "hyperledger/besu:develop"
   mem_limit: 500M
-  environment:
-    - NODE_INGRESS_CONTRACT_ADDRESS=0x0000000000000000000000000000000000009999
-    - ACCOUNT_INGRESS_CONTRACT_ADDRESS=0x0000000000000000000000000000000000008888
-    - BESU_NODE_PERM_ACCOUNT=D1cf9D73a91DE6630c2bb068Ba5fDdF9F0DEac09
-    - BESU_NODE_PERM_KEY=797c13f7235c627f6bd013dc17fff4c12213ab49abcf091f77c83f16db10e90b
-    - CHAIN_ID=48122
-  entrypoint:
-    - /opt/besu/bin/besu
-    - --data-path=/data
-    - --genesis-file=/config/genesis.json
-    - --node-private-key-file=/config/besu-keystore/key
-    - --min-gas-price=0
-    - --revert-reason-enabled
-    - --host-whitelist=*
-    - --graphql-http-enabled
-    - --discovery-enabled=false
-    - --permissions-accounts-contract-enabled
-    - --permissions-accounts-contract-address=0x0000000000000000000000000000000000008888
-    - --permissions-nodes-contract-enabled 
-    - --permissions-nodes-contract-address=0x0000000000000000000000000000000000009999
-    - --permissions-nodes-contract-version=2
-    - --rpc-http-enabled
-    - --rpc-http-cors-origins=*
-    - --rpc-http-api=ADMIN,ETH,NET,PERM,CLIQUE
 
 services:
   besu1:
     << : *besu
     volumes:
-      - ./docker-config:/config:ro
+      - ./docker-config:/config
       - ./docker-data/node1:/data
+    ports:
+      - "8545:8545"
+    entrypoint:
+      - /opt/besu/bin/besu
+      - --data-path=/data
+      - --genesis-file=/config/genesis.json
+      - --node-private-key-file=/config/besu-keystore/besu1-key
+      - --permissions-accounts-contract-enabled
+      - --permissions-accounts-contract-address=0x0000000000000000000000000000000000008888
+      - --revert-reason-enabled
+      - --host-whitelist=*
+      - --graphql-http-enabled
+      - --rpc-http-enabled
+      - --rpc-http-cors-origins=*
+      - --rpc-http-api=ADMIN,ETH,NET,PERM,CLIQUE
+      - --discovery-enabled=true
+
   besu2:
     << : *besu
     volumes:
@@ -44,29 +37,35 @@ services:
       - /opt/besu/bin/besu
       - --data-path=/data
       - --genesis-file=/config/genesis.json
-      - --node-private-key-file=/config/besu-keystore/key
-      - --min-gas-price=0
+      - --node-private-key-file=/config/besu-keystore/besu2-key
       - --revert-reason-enabled
       - --host-whitelist=*
       - --graphql-http-enabled
-      - --discovery-enabled=false
       - --permissions-accounts-contract-enabled
       - --permissions-accounts-contract-address=0x0000000000000000000000000000000000008888
-      - --permissions-nodes-contract-enabled 
-      - --permissions-nodes-contract-address=0x0000000000000000000000000000000000009999
-      - --permissions-nodes-contract-version=2
       - --rpc-http-enabled
       - --rpc-http-cors-origins=*
-      - --bootnodes=enode://823e8c26c73e20391a21ed9a8812e1a10d479c9a12d2beb48adf3a0b4e1edcddbcc5aa590ccec56fe493ba53f9f7bee497eb39fa82aba9b688ade729b142c960@10.10.10.1:30303
+      - --discovery-enabled=true
+      - --bootnodes=enode://823e8c26c73e20391a21ed9a8812e1a10d479c9a12d2beb48adf3a0b4e1edcddbcc5aa590ccec56fe493ba53f9f7bee497eb39fa82aba9b688ade729b142c960@besu1:30303
+      - --Xdns-enabled=true
 
-networks:
-  default:
-    internal: true
-    ipam:
-      config:
-        - subnet: 10.10.10.0/24
-          ip_range: 10.10.10.0/24
-          gateway: 172.28.5.0/24172.28.5.254
-          aux_addresses:
-            besu1: 10.10.10.1
-            besu2: 10.10.10.2
+  besu3:
+    << : *besu
+    volumes:
+      - ./docker-config:/config:ro
+      - ./docker-data/node3:/data
+    entrypoint:
+      - /opt/besu/bin/besu
+      - --data-path=/data
+      - --genesis-file=/config/genesis.json
+      - --node-private-key-file=/config/besu-keystore/besu3-key
+      - --revert-reason-enabled
+      - --host-whitelist=*
+      - --graphql-http-enabled
+      - --permissions-accounts-contract-enabled
+      - --permissions-accounts-contract-address=0x0000000000000000000000000000000000008888
+      - --rpc-http-enabled
+      - --rpc-http-cors-origins=*
+      - --discovery-enabled=true
+      - --bootnodes=enode://823e8c26c73e20391a21ed9a8812e1a10d479c9a12d2beb48adf3a0b4e1edcddbcc5aa590ccec56fe493ba53f9f7bee497eb39fa82aba9b688ade729b142c960@besu1:30303
+      - --Xdns-enabled=true
