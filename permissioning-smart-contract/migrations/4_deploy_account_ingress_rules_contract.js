@@ -1,3 +1,5 @@
+const fs = require('fs');
+
 const Web3Utils = require("web3-utils");
 const AllowlistUtils = require('../scripts/allowlist_utils');
 
@@ -67,6 +69,7 @@ module.exports = async(deployer, network) => {
     await deployer.deploy(Rules, accountIngress, accountStorage);
     console.log("   > Rules deployed with AccountIngress.address = " + accountIngress + "\n   > and storageAddress = " + accountStorage);
     let accountRulesContract = await Rules.deployed();
+    fs.writeFileSync('../contracts.env', 'export CONTRACT_ACCOUNT_RULES=' + accountRulesContract.address + '\n');
 
     // storage -> rules
     await storageInstance.upgradeVersion(Rules.address);
