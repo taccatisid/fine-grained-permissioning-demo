@@ -1,0 +1,29 @@
+@startuml
+
+actor Admin
+actor User
+participant Besu as "Besu\nNode"
+participant DelegateDemo as "DelegateDemo\nContract"
+participant CentralAccessControl as "CentralAccessControl\nContract"
+participant AccountRules as "AccountRules\nContract"
+
+== Account permissioning ==
+
+Admin -> AccountRules : addAccount(User)
+|||
+Admin -> AccountRules : setCreateContractPermission(User, true)
+|||
+User -> Besu : call(DelegateDemo)
+activate Besu
+Besu -> AccountRules : transactionAllowed(User, ...)
+Besu -> DelegateDemo : call
+deactivate Besu
+== Contract permissioning ==
+
+Admin -> CentralAccessControl : grantRole(Role, User)
+|||
+User -> DelegateDemo : call
+activate DelegateDemo
+DelegateDemo -> CentralAccessControl : hasRole(Role, User)
+deactivate DelegateDemo
+@enduml

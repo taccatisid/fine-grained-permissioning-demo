@@ -1,0 +1,23 @@
+@startuml
+actor Admin
+participant Genesis as "Genesis\nFile"
+participant DelegateDemo as "DelegateDemo\nContract"
+participant CentralAccessControl as "CentralAccessControl\nContract"
+participant AccountRules as "AccountRules\nContract"
+participant Bootstrap as "Bootstrap\nContract"
+
+== Static initialization ==
+Genesis -> Bootstrap : contains
+
+== Blockchain-wide account permissioning ==
+Admin -> AccountRules : deploy
+note right : the account deploying is granted admin privileges\nand allowed to create contracts
+AccountRules --> Bootstrap : update
+
+== Contract permissioning ==
+
+Admin -> CentralAccessControl : deploy
+note right : the account deploying is granted admin privileges
+Admin -> DelegateDemo : deploy
+DelegateDemo --> CentralAccessControl : linked to
+@enduml

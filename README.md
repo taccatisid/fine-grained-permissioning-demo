@@ -30,3 +30,29 @@ Stop the besu network via
 This retains the state of the blockchain. To erase all blockchain data and start from scratch run
 
     rm -r docker-data/node*/{DATABASE_METADATA.json,caches,database}
+
+Contract deployment sequence
+----------------------------
+
+Permissioning setup happens in three phases:
+
+1. A bootstrap contract is included in the [genesis file](/docker-config/genesis.json).
+   Besu nodes are started with `--permissions-accounts-contract-enabled --permissions-accounts-contract-address=0x0000000000000000000000000000000000008888` to activate account permissioning using this particular contract.
+   The bootstrap contract allows all blockchain interactions and has the sole purpose of being a placeholder before being updated by the actual account permissioning contract.
+2. The [AccountRules](/permissioning-smart-contract/contracts/AccountRules.sol) contract is deployed by an arbitrary account.
+   By deploying, this account becomes the admin account for entire blockchain.
+3. The [CentralAccessControl](/contracts/CentralAccessControl.sol) contract is deployed.
+   Again, the account deploying it becomes the administrator of that contract.
+
+All subsequently deployed contracts are derived from the [DelegatedAccessControl](/contracts/DelegatedAccessControl.sol) contract and linked to the `CentralAccessControl` instance on deployment.
+
+![Contract deployment sequence UML diagram](contract-deployment.png)
+
+Permissiong control flow
+------------------------
+
+Every blockchain interaction is checked on two levels:
+* Transactions are checked by looking up whether the sender is permitted in the `AccountRules` contract.
+* Calls in a transaction are checked by looking up whether the caller has the required role in the `CentralAccessControl` contract.
+
+![Permissiong control flow UML diagram](contract-calls.png)
