@@ -16,7 +16,7 @@ accountRules = new web3.eth.Contract(accountRulesAbi, process.env.CONTRACT_ACCOU
 writerRole = web3.utils.keccak256("WRITER_ROLE");
 
 // Things to try:
-await accountRules.methods.addAccount(internalAccount).send({from: adminAccount});
+// - await accountRules.methods.addAccount(internalAccount).send({from: adminAccount});
 // - await accountRules.methods.setCreateContractPermission(internalAccount, true).send({from: adminAccount});
 // - await DirectDemo.new({from: internalAccount})
 // - directDemo.grantRole(writerRole, internalAccount, {from: adminAccount})
