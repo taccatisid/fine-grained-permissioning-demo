@@ -16,7 +16,7 @@ If you want to see the besu node logs, omit the `-d` and run this command in a s
 
 Then compile and deploy all contracts to your network using
 
-    ./deploy
+    ./deploy.sh
 
 and follow the instructions given there.
 

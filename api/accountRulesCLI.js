@@ -60,7 +60,7 @@ const startArgvCLI = () =>
     })
     .option("contractAddress", {
       alias: "ca",
-      default: "0xA4Ac063cFAfbe6D8411BB238C0912f898E778b2D",
+      default: "0x7C2EdB0E7CB6920b961b9a52b61fc17039181e6b",
       describe: "AccountRules contract address",
       type: "string",
     })
