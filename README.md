@@ -56,3 +56,17 @@ Every blockchain interaction is checked on two levels:
 * Calls in a transaction are checked by looking up whether the caller has the required role in the `CentralAccessControl` contract.
 
 ![Permissiong control flow UML diagram](contract-calls.png)
+
+Using the CLI
+-------------
+
+A scaffolded CLI is provided that makes web3js calls to the permissioning contracts. Two options are provided for accounts permissioning and contract permissioning under the `/api` folder.
+
+Once the nodes are configured and contracts are deployed, you can start experimenting with the api - run `node api/accountRulesCLI.js -h` to get a full list of all available commands.
+
+For example you can use
+``` 
+node api/accountRulesCLI.js accountPermitted D1cf9D73a91DE6630c2bb068Ba5fDdF9F0DEac0
+```
+
+To send a call to the accounPermitted method from the AccountRules contract.
