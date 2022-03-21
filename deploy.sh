@@ -5,8 +5,8 @@ source accounts.env
 set -x
 
 yarn install
-(cd permissioning-smart-contract && yarn install)
-(cd permissioning-smart-contract && yarn truffle migrate --network demo)
+(cd account-permissioning-contracts && yarn install)
+(cd account-permissioning-contracts && yarn truffle migrate --network demo)
 yarn truffle migrate --network demo
 
 set +x
