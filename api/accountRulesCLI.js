@@ -8,6 +8,43 @@ const Fs = require("fs");
 const startArgvCLI = () =>
   require("yargs")
     .env("ACCOUNTRULES")
+    .command("getReadOnly", "Query the read only status")
+    .command("enterReadOnly", "Enter read only mode if not in read only mode")
+    .command(
+      "exitReadOnly",
+      "Exit read only mode if already in ready only mode"
+    )
+    .command(
+      "accountPermitted <account>",
+      "Query whether an account exists in account storage (is permitted)",
+      {
+        account: {
+          description: "address of the account as a hexadecimal string",
+          type: "string",
+        },
+      }
+    )
+    .command(
+      "setCreateContractPermission <account> <canCreateContract>",
+      "Set create contract permission for an account to true or false",
+      {
+        account: {
+          description: "address of the account as a hexadecimal string",
+          type: "string",
+        },
+        canCreateContract: {
+          description:
+            "whether the account is permitted to create contract as a boolean",
+          type: "boolean",
+        },
+      }
+    )
+    .command("getCreateContractPermission <account>", "Query createContract permission for account", {
+      account: {
+        description: "address of the account as a hexadecimal string",
+        type: "string",
+      }
+    })
     .command("addAccount <account>", "Add account to account storage", {
       account: {
         description: "address of the account as a hexadecimal string",
@@ -15,10 +52,11 @@ const startArgvCLI = () =>
       },
     })
     .command("removeAccount <account>", "Remove account from account storage", {
-        account: {
-            description: "address of the account to be removed as a hexadecimal string",
-            type: "string",
-        }
+      account: {
+        description:
+          "address of the account to be removed as a hexadecimal string",
+        type: "string",
+      },
     })
     .option("contractAddress", {
       alias: "ca",
@@ -48,8 +86,7 @@ const startArgvCLI = () =>
       type: "string",
     })
     .help()
-    .alias("help", "h")
-    .argv;
+    .alias("help", "h").argv;
 
 async function main() {
   const argv = startArgvCLI();
@@ -77,11 +114,77 @@ async function main() {
     getHex(argv.contractAddress, 40, false, "contractAddress")
   );
 
-  let transactionReceipt
-  let transactionEvents
+  let transactionReceipt;
+  let transactionEvents;
   // Main handler
   try {
     switch (argv._[0]) {
+      case "getReadOnly":
+        console.log(
+          `Getting read only mode status from contract ${argv.contractAddress}`
+        );
+
+        transactionReceipt = await AccountRulesContract.methods
+          .isReadOnly()
+          .call({ from: adminAccount.address });
+
+        printEvent("getReadOnly", null, transactionReceipt);
+
+        break;
+      case "enterReadOnly":
+        console.log("Atttempting to enter read only mode");
+
+        transactionReceipt = await AccountRulesContract.methods
+          .enterReadOnly()
+          .send({ from: adminAccount.address });
+
+        printEvent("enterReadOnly", null, transactionReceipt);
+
+        break;
+      case "exitReadOnly":
+        console.log("Attempting to exit read only mode");
+
+        transactionReceipt = await AccountRulesContract.methods
+          .exitReadOnly()
+          .send({ from: adminAccount.address });
+
+        printEvent("exitReadOnly", null, transactionReceipt);
+
+        break;
+      case "accountPermitted":
+        console.log(
+          `Querying if account ${argv.account} is permitted (whether the account is in account storage)`
+        );
+
+        transactionReceipt = await AccountRulesContract.methods
+          .accountPermitted(getHex(argv.account, 40, true, "account"))
+          .call({ from: adminAccount.address });
+
+        printEvent("accountPermitted", null, transactionReceipt);
+        break;
+      case "setCreateContractPermission":
+        console.log(
+          `Attempting to set ${argv.account} can create contract permission to ${argv.canCreateContract}`
+        );
+
+        transactionReceipt = await AccountRulesContract.methods
+          .setCreateContractPermission(
+            getHex(argv.account, 40, true, "account"),
+            argv.canCreateContract
+          )
+          .send({ from: adminAccount.address });
+
+        printEvent("setCreateContractPermission", null, transactionReceipt)
+
+        break;
+      case "getCreateContractPermission":
+        console.log(`Querying can create contract permission for account ${argv.account}`)
+
+        transactionReceipt = await AccountRulesContract.methods.getCreateContractPermission(getHex(argv.account, 40, true, "account")).call({ from: adminAccount.address })
+
+        printEvent("getCreateContractPermission", null, transactionReceipt)
+
+        break;
       case "addAccount":
         console.log(
           `Sending a transaction from account ${adminAccount.address} to add account ${argv.account} to account storage`
@@ -101,21 +204,21 @@ async function main() {
         break;
       case "removeAccount":
         console.log(
-            `Sending a transaction from account ${adminAccount.address} to remove account ${argv.account} from account storage`
-          );
-  
-          transactionReceipt = await AccountRulesContract.methods
-            .removeAccount(getHex(argv.account, 40, true, "account"))
-            .send({ from: adminAccount.address });
-  
-          transactionEvents = await AccountRulesContract.getPastEvents(
-            "AccountRemoved",
-            { transactionHash: transactionReceipt.transactionHash }
-          );
-  
-          printEvent("AccountRemoved", transactionEvents[0], transactionReceipt);
-  
-          break;
+          `Sending a transaction from account ${adminAccount.address} to remove account ${argv.account} from account storage`
+        );
+
+        transactionReceipt = await AccountRulesContract.methods
+          .removeAccount(getHex(argv.account, 40, true, "account"))
+          .send({ from: adminAccount.address });
+
+        transactionEvents = await AccountRulesContract.getPastEvents(
+          "AccountRemoved",
+          { transactionHash: transactionReceipt.transactionHash }
+        );
+
+        printEvent("AccountRemoved", transactionEvents[0], transactionReceipt);
+
+        break;
       default:
         console.log(`Unknown command ${argv._[0]}`);
         break;
@@ -186,8 +289,25 @@ function printEvent(eventName, event, receipt) {
         console.error("Account not removed, transaction receipt:\n" + receipt);
       }
       break;
+    case "getReadOnly":
+      console.log(
+        `Permissioning contract ${receipt ? "is" : "is not"} in read only mode.`
+      );
+      break;
+    case "accountPermitted":
+      console.log(
+        `Account ${
+          receipt ? "is" : "is not"
+        } permitted (in the account storage)`
+      );
+      break;
+    case "getCreateContractPermission":
+      console.log(
+       `Account ${receipt ? "has" : "does not have"} permission to create contracts` 
+      )
+      break;
     default:
-      console.log(result);
+      console.log(receipt);
   }
 }
 
