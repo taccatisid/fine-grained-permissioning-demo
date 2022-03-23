@@ -1,0 +1,52 @@
+to generate the ABI files for the OpenZeppelin contracts: in the contracts directory: solc --abi access/AccessControl.sol -o build
+
+To start the demo network, in the ../.. directory: docker-compose up -d
+
+// This did not quite work: deploy the contracts: ./deploy.de
+
+Instead:
+source accounts.env
+cd permissioning-smart-contract
+yarn truffle migrate --network demo
+cd ../
+yarn truffle migrate --network demo
+source accounts.env
+source contracts.env
+
+node api/accountRulesCLI.js addAccount fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+node api/accountRulesCLI.js accountPermitted fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+
+Writer role: 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8
+
+node api/OpenZeppelin/scripts/cli/directAccessControl.js getRoleAdmin 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8
+node api/OpenZeppelin/scripts/cli/directAccessControl.js grantRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+node api/OpenZeppelin/scripts/cli/directAccessControl.js hasRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+node api/OpenZeppelin/scripts/cli/directAccessControl.js revokeRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+node api/OpenZeppelin/scripts/cli/directAccessControl.js grantRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+# The following does not work because only the account itself can renounce
+node api/OpenZeppelin/scripts/cli/directAccessControl.js renounceRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+node api/OpenZeppelin/scripts/cli/directAccessControl.js -p 0x10e9a39581f929f090c6a43d11f6b519974410226e7d97fb1914955d0a0f302d renounceRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+node api/OpenZeppelin/scripts/cli/directAccessControl.js testWrite -p 0x10e9a39581f929f090c6a43d11f6b519974410226e7d97fb1914955d0a0f302d  0x12345abcde
+# The next call should fail as the default account (admin) does not have the writer role
+node api/OpenZeppelin/scripts/cli/directAccessControl.js testWrite 0x12345
+
+
+node api/OpenZeppelin/scripts/cli/delegatedAccessControl.js getRoleAdmin 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8
+node api/OpenZeppelin/scripts/cli/delegatedAccessControl.js grantRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+node api/OpenZeppelin/scripts/cli/delegatedAccessControl.js hasRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+node api/OpenZeppelin/scripts/cli/delegatedAccessControl.js revokeRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+node api/OpenZeppelin/scripts/cli/delegatedAccessControl.js grantRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+# The following does not work because only the account itself can renounce
+node api/OpenZeppelin/scripts/cli/delegatedAccessControl.js renounceRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+node api/OpenZeppelin/scripts/cli/delegatedAccessControl.js -p 0x10e9a39581f929f090c6a43d11f6b519974410226e7d97fb1914955d0a0f302d renounceRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+node api/OpenZeppelin/scripts/cli/delegatedAccessControl.js testWrite -p 0x10e9a39581f929f090c6a43d11f6b519974410226e7d97fb1914955d0a0f302d  0x12345abcde
+# The next call should fail as the default account (admin) does not have the writer role
+node api/OpenZeppelin/scripts/cli/delegatedAccessControl.js testWrite 0x12345
+
+
+
+
+
+
+To remove the DB for besu:
+rm -r docker-data/node*/{DATABASE_METADATA.json,caches,database}
