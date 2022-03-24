@@ -178,7 +178,6 @@ async function main() {
                 // To test the contract that delegates to the central authority we have to use the address of the delegated contract
                 contract = await new web3.eth.Contract( delegateDemoContractJson, process.env.CONTRACT_DELEGATED);
                 console.log(`Sending a transaction from account ${myAccount.address} to check if it is allowed to write to the test contract`);
-                // TODO: Frank -> the following does not return a receipt!!!!!
                 receipt = await contract.methods.write(prefix0x(true, argv.value)).send({from: myAccount.address});
                 console.log(receipt);
                 console.log(`Calling the demo contract to retrieve the value`);

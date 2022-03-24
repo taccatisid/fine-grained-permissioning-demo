@@ -14,9 +14,5 @@ echo "
 All contracts have been deployed.
 
 Now run
-  source accounts.env
   source contracts.env
-  yarn truffle console --network demo
-and once it had started load the rest of the demo using
-  .load demo.js
-and follow the instructions from there."
+to make the contract addresses available to the scripts."

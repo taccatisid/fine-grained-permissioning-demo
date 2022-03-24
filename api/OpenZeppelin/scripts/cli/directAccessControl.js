@@ -137,49 +137,45 @@ async function main() {
 
     const myAccount = web3.eth.accounts.privateKeyToAccount(prefix0x(true, argv.privateKey));
 
+    const DirectDemoContract = await new web3.eth.Contract( demoWriteContractJson, process.env.CONTRACT_DIRECT);
+
     let receipt;
-    let contract;
     try {
         switch (argv._[0]) {
-            // When doing the direct demo we have to use the address of the demo contract itself, as the AccessControl contract is included there
+            // When doing the direct demo we have to use the address of the DirectDemoContract itself, as the AccessControl contract is included there
             case "hasRole":
-                contract = await new web3.eth.Contract( demoWriteContractJson, process.env.CONTRACT_DIRECT);
                 console.log(`checking whether account ${argv.account} has the role ${argv.role}`);
-                let result = await contract.methods.hasRole(getHex(argv.role, 64, true, "role"), getHex(argv.account, 40, true, "account")).call();
+                let result = await DirectDemoContract.methods.hasRole(getHex(argv.role, 64, true, "role"), getHex(argv.account, 40, true, "account")).call();
                 let string = result ? 'DOES' : 'DOES NOT';
                 console.log(`Account ${argv.account} ${string} have the role ${argv.role}`);
                 break;
             case "getRoleAdmin":
-                contract = await new web3.eth.Contract( demoWriteContractJson, process.env.CONTRACT_DIRECT);
-                console.log(`getting the role admin for role ${argv.role}`)
-                let admin = await contract.methods.getRoleAdmin(getHex(argv.role, 64, true, "role")).call();
-                console.log(`The admin for role ${argv.role} is ${admin}`);
+                console.log(`getting the admin role for role ${argv.role}`)
+                let admin = await DirectDemoContract.methods.getRoleAdmin(getHex(argv.role, 64, true, "role")).call();
+                console.log(`The admin role for role ${argv.role} is ${admin}`);
                 break;
             case "grantRole":
-                contract = await new web3.eth.Contract( demoWriteContractJson, process.env.CONTRACT_DIRECT);
                 console.log(`Sending a transaction from account ${myAccount.address} to grant role ${argv.role} to account ${argv.account}`);
-                receipt = await contract.methods.grantRole(getHex(argv.role, 64, true, "role"), getHex(argv.account, 40, true, "account")).send({from: myAccount.address});
+                receipt = await DirectDemoContract.methods.grantRole(getHex(argv.role, 64, true, "role"), getHex(argv.account, 40, true, "account")).send({from: myAccount.address});
                 printEvent("RoleGranted", receipt);
                 break;
             case "revokeRole":
-                contract = await new web3.eth.Contract( demoWriteContractJson, process.env.CONTRACT_DIRECT);
                 console.log(`Sending a transaction from account ${myAccount.address} to revoke role ${argv.role} from account ${argv.account}`);
-                receipt = await contract.methods.revokeRole(getHex(argv.role, 64, true, "role"), getHex(argv.account, 40, true, "account")).send({from: myAccount.address});
+                receipt = await DirectDemoContract.methods.revokeRole(getHex(argv.role, 64, true, "role"), getHex(argv.account, 40, true, "account")).send({from: myAccount.address});
                 printEvent("RoleRevoked", receipt);
                 break;
             case "renounceRole":
-                contract = await new web3.eth.Contract( demoWriteContractJson, process.env.CONTRACT_DIRECT);
                 console.log(`Sending a transaction from account ${myAccount.address} to renounce role ${argv.role} from account ${argv.account}`);
-                receipt = await contract.methods.renounceRole(getHex(argv.role, 64, true, "role"), getHex(argv.account, 40, true, "account")).send({from: myAccount.address});
+                receipt = await DirectDemoContract.methods.renounceRole(getHex(argv.role, 64, true, "role"), getHex(argv.account, 40, true, "account")).send({from: myAccount.address});
                 printEvent("RoleRevoked", receipt);
                 break;
             case "testWrite":
-                contract = await new web3.eth.Contract( demoWriteContractJson, process.env.CONTRACT_DIRECT);
                 console.log(`Sending a transaction from account ${myAccount.address} to check if it is allowed to write to the test contract`);
-                receipt = await contract.methods.write(prefix0x(true, argv.value)).send({from: myAccount.address});
-                console.log(`The transaction recipt:\n${recipt}`);
+                receipt = await DirectDemoContract.methods.write(prefix0x(true, argv.value)).send({from: myAccount.address});
+                console.log(`The transaction receipt:`);
+                console.log(receipt);
                 console.log(`Calling the demo contract to retrieve the value`);
-                let hexValue = Number(await contract.methods.read().call()).toString(16);
+                let hexValue = Number(await DirectDemoContract.methods.read().call()).toString(16);
                 console.log(`The value is set to 0x${hexValue}`);
                 break;
             default:
