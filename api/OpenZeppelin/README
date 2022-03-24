@@ -1,0 +1,67 @@
+to generate the ABI files for the OpenZeppelin contracts: in the contracts directory: solc @openzeppelin=api/OpenZeppelin/ -o build --abi contracts/DelegateDemo.sol
+
+# To start the demo network: 
+docker-compose up -d
+
+# deploy the contracts: 
+./deploy.de
+
+# to have the contract addresses available for the scripts:
+source contracts.env
+
+# This account needs to be added to make the example calls further down work
+node api/accountRulesCLI.js addAccount fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+node api/accountRulesCLI.js accountPermitted fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+
+# Writer role: 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8
+
+
+
+##### Section for the DirectDemo:
+# Admin role for the writer role: 0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775 # this role is granted to the default account of the script (0xd1cf9d73a91de6630c2bb068ba5fddf9f0deac09) in the constructor of the DirectDemo.sol contract
+# The Admin role is only available in the DirectDemo, to show
+node api/OpenZeppelin/scripts/cli/directAccessControl.js getRoleAdmin 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8
+node api/OpenZeppelin/scripts/cli/directAccessControl.js grantRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+node api/OpenZeppelin/scripts/cli/directAccessControl.js hasRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+node api/OpenZeppelin/scripts/cli/directAccessControl.js revokeRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+node api/OpenZeppelin/scripts/cli/directAccessControl.js grantRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+# The following does not work because only the account itself can renounce
+node api/OpenZeppelin/scripts/cli/directAccessControl.js renounceRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+node api/OpenZeppelin/scripts/cli/directAccessControl.js renounceRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+node api/OpenZeppelin/scripts/cli/directAccessControl.js -p 0x10e9a39581f929f090c6a43d11f6b519974410226e7d97fb1914955d0a0f302d renounceRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+node api/OpenZeppelin/scripts/cli/directAccessControl.js grantRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+node api/OpenZeppelin/scripts/cli/directAccessControl.js testWrite -p 0x10e9a39581f929f090c6a43d11f6b519974410226e7d97fb1914955d0a0f302d  0x12345abcde
+# The next call should fail as the default account (admin) does not have the writer role
+node api/OpenZeppelin/scripts/cli/directAccessControl.js testWrite 0x12345
+# We can grant the admin role for the writer role to another account now
+node api/OpenZeppelin/scripts/cli/directAccessControl.js grantRole 0xa49807205ce4d355092ef5a8a18f56e8913cf4a201fbe287825b095693c21775 0xfdce5d73afea75cd646694d82900e8db7641f8b6
+# Now the account 0xfdce5d73afea75cd646694d82900e8db7641f8b6 can assign the write role to itself
+node api/OpenZeppelin/scripts/cli/directAccessControl.js grantRole -p 0x10e9a39581f929f090c6a43d11f6b519974410226e7d97fb1914955d0a0f302d 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 0xfdce5d73afea75cd646694d82900e8db7641f8b6
+# Now we can test
+node api/OpenZeppelin/scripts/cli/directAccessControl.js testWrite -p 0x10e9a39581f929f090c6a43d11f6b519974410226e7d97fb1914955d0a0f302d 0x567
+
+
+
+
+
+##### Section for the DelegateDemo
+# To find out what the role of the admin for the writer role is
+node api/OpenZeppelin/scripts/cli/delegatedAccessControl.js getRoleAdmin 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8
+node api/OpenZeppelin/scripts/cli/delegatedAccessControl.js grantRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+node api/OpenZeppelin/scripts/cli/delegatedAccessControl.js hasRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+node api/OpenZeppelin/scripts/cli/delegatedAccessControl.js revokeRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+node api/OpenZeppelin/scripts/cli/delegatedAccessControl.js grantRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+# The following does not work because only the account itself can renounce
+node api/OpenZeppelin/scripts/cli/delegatedAccessControl.js renounceRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+node api/OpenZeppelin/scripts/cli/delegatedAccessControl.js -p 0x10e9a39581f929f090c6a43d11f6b519974410226e7d97fb1914955d0a0f302d renounceRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+node api/OpenZeppelin/scripts/cli/delegatedAccessControl.js testWrite -p 0x10e9a39581f929f090c6a43d11f6b519974410226e7d97fb1914955d0a0f302d  0x1234bcde0101
+# The next call should fail as the default account (admin) does not have the writer role
+node api/OpenZeppelin/scripts/cli/delegatedAccessControl.js testWrite 0x12345
+
+
+
+
+
+
+To remove the DB for besu:
+rm -r docker-data/node*/{DATABASE_METADATA.json,caches,database}
