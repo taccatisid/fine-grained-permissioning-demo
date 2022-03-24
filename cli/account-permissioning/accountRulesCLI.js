@@ -39,12 +39,16 @@ const startArgvCLI = () =>
         },
       }
     )
-    .command("getCreateContractPermission <account>", "Query createContract permission for account", {
-      account: {
-        description: "address of the account as a hexadecimal string",
-        type: "string",
+    .command(
+      "getCreateContractPermission <account>",
+      "Query createContract permission for account",
+      {
+        account: {
+          description: "address of the account as a hexadecimal string",
+          type: "string",
+        },
       }
-    })
+    )
     .command("addAccount <account>", "Add account to account storage", {
       account: {
         description: "address of the account as a hexadecimal string",
@@ -92,7 +96,10 @@ async function main() {
   const argv = startArgvCLI();
   // This file is generated using 'truffle compile' and found under
   // 'src/chain/abis'
-  const abi = Fs.readFileSync("./api/AccountRules.json", "utf-8");
+  const abi = Fs.readFileSync(
+    "./cli/account-permissioning/AccountRules.json",
+    "utf-8"
+  );
   const contractJson = JSON.parse(abi);
 
   let provider = new HDWalletProvider({
@@ -174,15 +181,21 @@ async function main() {
           )
           .send({ from: adminAccount.address });
 
-        printEvent("setCreateContractPermission", null, transactionReceipt)
+        printEvent("setCreateContractPermission", null, transactionReceipt);
 
         break;
       case "getCreateContractPermission":
-        console.log(`Querying can create contract permission for account ${argv.account}`)
+        console.log(
+          `Querying can create contract permission for account ${argv.account}`
+        );
 
-        transactionReceipt = await AccountRulesContract.methods.getCreateContractPermission(getHex(argv.account, 40, true, "account")).call({ from: adminAccount.address })
+        transactionReceipt = await AccountRulesContract.methods
+          .getCreateContractPermission(
+            getHex(argv.account, 40, true, "account")
+          )
+          .call({ from: adminAccount.address });
 
-        printEvent("getCreateContractPermission", null, transactionReceipt)
+        printEvent("getCreateContractPermission", null, transactionReceipt);
 
         break;
       case "addAccount":
@@ -195,11 +208,16 @@ async function main() {
           .send({ from: adminAccount.address });
 
         transactionEvents = await AccountRulesContract.getPastEvents(
-          "AccountAdded",
-          { transactionHash: transactionReceipt.transactionHash }
+          "AccountAdded"
         );
 
-        printEvent("AccountAdded", transactionEvents[0], transactionReceipt);
+        printEvent(
+          "AccountAdded",
+          transactionEvents.filter(
+            (e) => e.transactionHash === transactionReceipt.transactionHash
+          )[0],
+          transactionReceipt
+        );
 
         break;
       case "removeAccount":
@@ -278,7 +296,10 @@ function printEvent(eventName, event, receipt) {
         console.log(event.returnValues);
         console.log("Account successfully added");
       } else {
-        console.error("Account not added, transaction receipt:\n" + receipt);
+        console.log(event);
+        console.error(
+          "Account not added, transaction receipt:\n" + JSON.stringify(receipt)
+        );
       }
       break;
     case "AccountRemoved":
@@ -303,8 +324,10 @@ function printEvent(eventName, event, receipt) {
       break;
     case "getCreateContractPermission":
       console.log(
-       `Account ${receipt ? "has" : "does not have"} permission to create contracts` 
-      )
+        `Account ${
+          receipt ? "has" : "does not have"
+        } permission to create contracts`
+      );
       break;
     default:
       console.log(receipt);
