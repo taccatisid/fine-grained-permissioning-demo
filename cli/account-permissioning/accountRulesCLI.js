@@ -49,6 +49,19 @@ const startArgvCLI = () =>
         },
       }
     )
+    .command("getAccounts", "Gets all permitted accounts")
+    .command("addAdmin <account>", "Add account to list of admins", {
+      account: {
+        description: "address of the account as a hexadecimal string",
+        type: "string",
+      },
+    })
+    .command("removeAdmin <account>", "Remove account from admin storage", {
+      account: {
+        description: "address of the account as a hexadecimal string",
+        type: "string",
+      },
+    })
     .command("addAccount <account>", "Add account to account storage", {
       account: {
         description: "address of the account as a hexadecimal string",
@@ -198,6 +211,15 @@ async function main() {
         printEvent("getCreateContractPermission", null, transactionReceipt);
 
         break;
+      case "getAccounts":
+        console.log(`Querying all permitted accounts`);
+
+        transactionReceipt = await AccountRulesContract.methods
+          .getAccounts()
+          .call({ from: adminAccount.address });
+
+        printEvent("getAccounts", null, transactionReceipt);
+        break;
       case "addAccount":
         console.log(
           `Sending a transaction from account ${adminAccount.address} to add account ${argv.account} to account storage`
@@ -230,12 +252,60 @@ async function main() {
           .send({ from: adminAccount.address });
 
         transactionEvents = await AccountRulesContract.getPastEvents(
-          "AccountRemoved",
-          { transactionHash: transactionReceipt.transactionHash }
+          "AccountRemoved"
         );
 
-        printEvent("AccountRemoved", transactionEvents[0], transactionReceipt);
+        printEvent(
+          "AccountRemoved",
+          transactionEvents.filter(
+            (e) => e.transactionHash === transactionReceipt.transactionHash
+          )[0],
+          transactionReceipt
+        );
 
+        break;
+      case "addAdmin":
+        console.log(
+          `Sending a transaction from account ${adminAccount.address} to add account ${argv.account} to admin list`
+        );
+
+        transactionReceipt = await AccountRulesContract.methods
+          .addAdmin(getHex(argv.account, 40, true, "account"))
+          .send({ from: adminAccount.address });
+
+        transactionEvents = await AccountRulesContract.getPastEvents(
+          "AdminAdded"
+        );
+
+        printEvent(
+          "AdminAdded",
+          transactionEvents.filter(
+            (e) => e.transactionHash === transactionReceipt.transactionHash
+          )[0],
+          transactionReceipt
+        );
+
+        break;
+      case "removeAdmin":
+        console.log(
+          `Sending a transaction from account ${adminAccount.address} to remove account ${argv.account} to admin list`
+        );
+
+        transactionReceipt = await AccountRulesContract.methods
+          .removeAdmin(getHex(argv.account, 40, true, "account"))
+          .send({ from: adminAccount.address });
+
+        transactionEvents = await AccountRulesContract.getPastEvents(
+          "AdminRemoved"
+        );
+
+        printEvent(
+          "AdminRemoved",
+          transactionEvents.filter(
+            (e) => e.transactionHash === transactionReceipt.transactionHash
+          )[0],
+          transactionReceipt
+        );
         break;
       default:
         console.log(`Unknown command ${argv._[0]}`);

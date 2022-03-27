@@ -1,7 +1,36 @@
 Account Permissiong CLI
 =======================
-All example commands are run from the top level directory.
+All example commands are run from the top level directory. The network can be restricted to a read only mode - where only read operations (calls) are permitted, reads can be accessed by any account.
 
+Read methods
+============
+
+getAccounts
+-----------
+Retrieves a list of all permitted accounts in the network.
+
+Example usage `node cli/account-permissioning/accountRulesCLI.js getAccounts`
+
+Example response
+```
+Querying all permitted accounts
+[
+  '0xD1cf9D73a91DE6630c2bb068Ba5fDdF9F0DEac09',
+  '0x8b935bc20793c5Dbff83F3C699812AFCff08c804'
+]
+```
+
+accountPermitted
+----------------
+Checks whether an account address is permitted in the network.
+
+Example usage `node cli/account-permissioning/accountRulesCLI.js accountPermitted 0x8b935bc20793c5Dbff83F3C699812AFCff08c804`
+
+Example response
+```
+Querying if account 0x8b935bc20793c5Dbff83F3C699812AFCff08c804 is permitted (whether the account is in account storage)
+Account is permitted (in the account storage)
+```
 getReadOnly
 ------------
 Reads whether the storage is in read only mode.
@@ -11,6 +40,25 @@ Calls `AccountRules.getReadOnly`
 Example usage `node cli/account-permissioning/accountRulesCLI.js getReadOnly`
 
 Example response `Permissioning contract is not in read only mode.` 
+
+getCreateContractPermission
+---------------------------
+Queries whether an internal acccount can create contracts.
+
+Example usage `node cli/account-permissioning/accountRulesCLI.js getCreateContractPermission 0x8b935bc20793c5Dbff83F3C699812AFCff08c804`
+
+Example response
+```
+Querying can create contract permission for account 0x8b935bc20793c5Dbff83F3C699812AFCff08c804
+Account has permission to create contracts
+```
+
+getAdmins
+---------
+Retrieves the list of all admin addresses in the network.
+
+Admin methods (write/update)
+============================
 
 enterReadOnly
 --------------
@@ -71,6 +119,23 @@ Attempting to exit read only mode
 }
 ```
 
+addAdmin
+--------
+Adds an internal account to the admins list, this allows the account to call admin methods on the permissionig contracts.
+
+Example usage 
+
+Example response
+
+removeAdmin
+-----------
+Removes an admin account from the admins list.
+
+Example usage
+
+Example response 
+
+
 addAccount
 ----------
 Adds an internal account to account storage, this allows the account to send transactions in the permissioned network. This is an admin only function.
@@ -107,18 +172,6 @@ Result {
 Account successfully removed
 ```
 
-accountPermitted
-----------------
-Checks whether an account address is permitted in the network.
-
-Example usage `node cli/account-permissioning/accountRulesCLI.js accountPermitted 0x8b935bc20793c5Dbff83F3C699812AFCff08c804`
-
-Example response
-```
-Querying if account 0x8b935bc20793c5Dbff83F3C699812AFCff08c804 is permitted (whether the account is in account storage)
-Account is permitted (in the account storage)
-```
-
 setCreateContractPermission
 ---------------------------
 Sets whether an internal account can create contracts. This is an admin only function.
@@ -143,16 +196,4 @@ Attempting to set 0x8b935bc20793c5Dbff83F3C699812AFCff08c804 can create contract
   transactionIndex: 0,
   events: {}
 }
-```
-
-getCreateContractPermission
----------------------------
-Queries whether an internal acccount can create contracts.
-
-Example usage `node cli/account-permissioning/accountRulesCLI.js getCreateContractPermission 0x8b935bc20793c5Dbff83F3C699812AFCff08c804`
-
-Example response
-```
-Querying can create contract permission for account 0x8b935bc20793c5Dbff83F3C699812AFCff08c804
-Account has permission to create contracts
 ```
