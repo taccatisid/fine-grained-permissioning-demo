@@ -12,7 +12,7 @@ const argv = require('yargs')
             type: 'string',
         }
     })
-    .command('getRoleAdmin <role>', 'make a call to retrieve the admin account for a role', {
+    .command('getRoleAdmin <role>', 'make a call to retrieve the admin role for a role', {
         role: {
                 description: 'the role to check as a hexadecimal string with 32 bytes',
                 type: 'string',
