@@ -77,13 +77,19 @@ const startArgvCLI = () =>
     })
     .option("contractAddress", {
       alias: "ca",
-      default: "0x7C2EdB0E7CB6920b961b9a52b61fc17039181e6b",
+      // default: "0x7C2EdB0E7CB6920b961b9a52b61fc17039181e6b",
       describe: "AccountRules contract address",
+      type: "string",
+    })
+    .option("adminContractAddress", {
+      alias: "aca",
+      // default: "0x225dc879f9E1B555dd29dA6A7a0687E8F0AB54d4",
+      describe: "Admin contract address",
       type: "string",
     })
     .option("privateKey", {
       alias: "p",
-      default:
+      // default:
         "797c13f7235c627f6bd013dc17fff4c12213ab49abcf091f77c83f16db10e90b",
       describe: "private key in hexadecimal format",
       type: "string",
@@ -98,7 +104,7 @@ const startArgvCLI = () =>
     .option("chainId", {
       alias: "i",
       demandOption: true,
-      default: "0x7bd",
+      // default: "0x7bd",
       describe: "chainId of the blockchain",
       type: "string",
     })
@@ -113,6 +119,11 @@ async function main() {
     "./cli/account-permissioning/AccountRules.json",
     "utf-8"
   );
+  const adminAbi = Fs.readFileSync(
+    "./cli/account-permissioning/Admin.json",
+    "utf-8"
+  );
+  const adminJson = JSON.parse(adminAbi);
   const contractJson = JSON.parse(abi);
 
   let provider = new HDWalletProvider({
@@ -132,6 +143,10 @@ async function main() {
   const AccountRulesContract = await new web3.eth.Contract(
     contractJson.abi,
     getHex(argv.contractAddress, 40, false, "contractAddress")
+  );
+  const AdminContract = await new web3.eth.Contract(
+    adminJson.abi,
+    getHex(argv.adminContractAddress, 40, false, "adminContractAddress")
   );
 
   let transactionReceipt;
@@ -220,6 +235,15 @@ async function main() {
 
         printEvent("getAccounts", null, transactionReceipt);
         break;
+      case "getAdmins":
+        console.log(`Querying all admin accounts`);
+
+        transactionReceipt = await AdminContract.methods
+          .getAdmins()
+          .call({ from: adminAccount.address });
+
+        printEvent("getAdmins", null, transactionReceipt);
+        break;
       case "addAccount":
         console.log(
           `Sending a transaction from account ${adminAccount.address} to add account ${argv.account} to account storage`
@@ -269,13 +293,11 @@ async function main() {
           `Sending a transaction from account ${adminAccount.address} to add account ${argv.account} to admin list`
         );
 
-        transactionReceipt = await AccountRulesContract.methods
+        transactionReceipt = await AdminContract.methods
           .addAdmin(getHex(argv.account, 40, true, "account"))
           .send({ from: adminAccount.address });
 
-        transactionEvents = await AccountRulesContract.getPastEvents(
-          "AdminAdded"
-        );
+        transactionEvents = await AdminContract.getPastEvents("AdminAdded");
 
         printEvent(
           "AdminAdded",
@@ -291,13 +313,11 @@ async function main() {
           `Sending a transaction from account ${adminAccount.address} to remove account ${argv.account} to admin list`
         );
 
-        transactionReceipt = await AccountRulesContract.methods
+        transactionReceipt = await AdminContract.methods
           .removeAdmin(getHex(argv.account, 40, true, "account"))
           .send({ from: adminAccount.address });
 
-        transactionEvents = await AccountRulesContract.getPastEvents(
-          "AdminRemoved"
-        );
+        transactionEvents = await AdminContract.getPastEvents("AdminRemoved");
 
         printEvent(
           "AdminRemoved",
@@ -378,6 +398,22 @@ function printEvent(eventName, event, receipt) {
         console.log("Account successfully removed");
       } else {
         console.error("Account not removed, transaction receipt:\n" + receipt);
+      }
+      break;
+    case "AdminAdded":
+      if (event.returnValues?.adminAdded === true) {
+        console.log(event.returnValues);
+        console.log("Admin successfully added");
+      } else {
+        console.error("Admin not added, transaction receipt:\n" + receipt);
+      }
+      break;
+    case "AdminRemoved":
+      if (event.returnValues?.adminRemoved === true) {
+        console.log(event.returnValues);
+        console.log("Admin successfully removed");
+      } else {
+        console.error("Admin not removed, transaction receipt:\n" + receipt);
       }
       break;
     case "getReadOnly":

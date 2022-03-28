@@ -2,6 +2,8 @@ Account Permissiong CLI
 =======================
 All example commands are run from the top level directory. The network can be restricted to a read only mode - where only read operations (calls) are permitted, reads can be accessed by any account.
 
+Note that default values for the contract addresses, admin private key and chain id are commented out - supply these values via CLI options (--optionName value) or change the default values.
+
 Read methods
 ============
 
@@ -56,6 +58,17 @@ Account has permission to create contracts
 getAdmins
 ---------
 Retrieves the list of all admin addresses in the network.
+
+Example usage `node cli/account-permissioning/accountRulesCLI.js getAdmins`
+
+Example response
+```
+Querying all admin accounts
+[
+  '0xD1cf9D73a91DE6630c2bb068Ba5fDdF9F0DEac09',
+  '0x8b935bc20793c5Dbff83F3C699812AFCff08c804'
+]
+```
 
 Admin methods (write/update)
 ============================
@@ -124,17 +137,43 @@ addAdmin
 Adds an internal account to the admins list, this allows the account to call admin methods on the permissionig contracts.
 
 Example usage 
+```
+node cli/account-permissioning/accountRulesCLI.js addAdmin 0x8b935bc20793c5Dbff83F3C699812AFCff08c804
+```
 
 Example response
+```
+Result {
+  '0': true,
+  '1': '0x8b935bc20793c5Dbff83F3C699812AFCff08c804',
+  '2': 'Admin account added successfully',
+  adminAdded: true,
+  account: '0x8b935bc20793c5Dbff83F3C699812AFCff08c804',
+  message: 'Admin account added successfully'
+}
+Admin successfully added
+```
 
 removeAdmin
 -----------
 Removes an admin account from the admins list.
 
 Example usage
+```
+node cli/account-permissioning/accountRulesCLI.js addAdmin 0x8b935bc20793c5Dbff83F3C699812AFCff08c804 
+```
 
 Example response 
-
+```
+Sending a transaction from account 0xD1cf9D73a91DE6630c2bb068Ba5fDdF9F0DEac09 to remove account 0x8b935bc20793c5Dbff83F3C699812AFCff08c804 to admin list
+Result {
+  '0': true,
+  '1': '0x8b935bc20793c5Dbff83F3C699812AFCff08c804',
+  adminRemoved: true,
+  account: '0x8b935bc20793c5Dbff83F3C699812AFCff08c804'
+}
+Admin successfully removed
+```
 
 addAccount
 ----------
