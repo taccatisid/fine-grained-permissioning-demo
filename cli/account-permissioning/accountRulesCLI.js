@@ -77,19 +77,19 @@ const startArgvCLI = () =>
     })
     .option("contractAddress", {
       alias: "ca",
-      // default: "0x7C2EdB0E7CB6920b961b9a52b61fc17039181e6b",
+      default: "0x7C2EdB0E7CB6920b961b9a52b61fc17039181e6b",
       describe: "AccountRules contract address",
       type: "string",
     })
     .option("adminContractAddress", {
       alias: "aca",
-      // default: "0x225dc879f9E1B555dd29dA6A7a0687E8F0AB54d4",
+      default: "0x225dc879f9E1B555dd29dA6A7a0687E8F0AB54d4",
       describe: "Admin contract address",
       type: "string",
     })
     .option("privateKey", {
       alias: "p",
-      // default:
+      default:
         "797c13f7235c627f6bd013dc17fff4c12213ab49abcf091f77c83f16db10e90b",
       describe: "private key in hexadecimal format",
       type: "string",
@@ -104,7 +104,7 @@ const startArgvCLI = () =>
     .option("chainId", {
       alias: "i",
       demandOption: true,
-      // default: "0x7bd",
+      default: "0x7bd",
       describe: "chainId of the blockchain",
       type: "string",
     })

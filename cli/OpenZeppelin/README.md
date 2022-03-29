@@ -103,11 +103,11 @@ Once the network is running and the contracts have been deployed you need to
 After a fresh start of the network only the default account in the CLI scripts can be used to execute transactions
 on the network. To allow a second account to make transactions you need to use the accountsRulesCLI script as follows
 
-    node api/accountRulesCLI.js addAccount fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+    node cli/account-permissioning/accountRulesCLI.js addAccount fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
 
 use the following to check whether the account is permitted to execute transactions
 
-    node api/accountRulesCLI.js accountPermitted fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+    node cli/account-permissioning/accountRulesCLI.js accountPermitted fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
 
 ***NOTE***: In the genesis file the account *0xfdCE5d73aFEa75cD646694d82900e8dB7641f8B6* has been setup with Ether.
 
@@ -122,11 +122,11 @@ which is *0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8*
 
 To check whether account fdCE5d73aFEa75cD646694d82900e8dB7641f8B6 has been granted the writer role necessary to call the write function
 
-    node api/OpenZeppelin/scripts/directAccessControlCLI.js hasRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+    node cli/OpenZeppelin/scripts/directAccessControlCLI.js hasRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
 
 To find out what the admin role is for the writer role run
 
-    node api/OpenZeppelin/scripts/directAccessControlCLI.js getRoleAdmin 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8
+    node cli/OpenZeppelin/scripts/directAccessControlCLI.js getRoleAdmin 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8
 
 ***NOTE***: In this example the admin role should be 0x00 (the _DEFAULT_ADMIN_ROLE_), as no admin role has been set
 
@@ -134,7 +134,7 @@ To find out what the admin role is for the writer role run
 
 To grant the role use the following command:
 
-    node api/OpenZeppelin/scripts/directAccessControlCLI.js grantRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+    node cli/OpenZeppelin/scripts/directAccessControlCLI.js grantRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
 
 ***NOTE***: If there is no private key specified in a call to the script the default private key specified in the CLI script is used, which is 
 the key for the account that has been granted the _DEFAULT_ADMIN_ROLE_. When an admin role has not been set for a role, accounts that have been granted the
@@ -143,15 +143,15 @@ granted the admin role for that role.
 
 Once the writer role has been granted the account can execute the write method on the demo contract
 
-    node api/OpenZeppelin/scripts/directAccessControlCLI.js testWrite -p 0x10e9a39581f929f090c6a43d11f6b519974410226e7d97fb1914955d0a0f302d  0x12345abcde
+    node cli/OpenZeppelin/scripts/directAccessControlCLI.js testWrite -p 0x10e9a39581f929f090c6a43d11f6b519974410226e7d97fb1914955d0a0f302d  0x12345abcde
 
 The admin can revoke the role for the account
 
-    node api/OpenZeppelin/scripts/directAccessControlCLI.js revokeRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+    node cli/OpenZeppelin/scripts/directAccessControlCLI.js revokeRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
 
 Or alternatively, the account itself can renounce the role
 
-    node api/OpenZeppelin/scripts/directAccessControlCLI.js -p 0x10e9a39581f929f090c6a43d11f6b519974410226e7d97fb1914955d0a0f302d renounceRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+    node cli/OpenZeppelin/scripts/directAccessControlCLI.js -p 0x10e9a39581f929f090c6a43d11f6b519974410226e7d97fb1914955d0a0f302d renounceRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
 
 ***NOTE***: In this call the private key is specified on the command line. This is the private key for account
 *0xfdCE5d73aFEa75cD646694d82900e8dB7641f8B6*
@@ -164,15 +164,15 @@ has to be called. To test whether an account can call the write function on the 
 to be called. 
 Here are the calls:
 
-    node api/OpenZeppelin/scripts/delegatedAccessControlCLI.js hasRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+    node cli/OpenZeppelin/scripts/delegatedAccessControlCLI.js hasRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
 
-    node api/OpenZeppelin/scripts/delegatedAccessControlCLI.js getRoleAdmin 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8
+    node cli/OpenZeppelin/scripts/delegatedAccessControlCLI.js getRoleAdmin 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8
 
-    node api/OpenZeppelin/scripts/delegatedAccessControlCLI.js grantRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+    node cli/OpenZeppelin/scripts/delegatedAccessControlCLI.js grantRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
 
-    node api/OpenZeppelin/scripts/delegatedAccessControlCLI.js testWrite -p 0x10e9a39581f929f090c6a43d11f6b519974410226e7d97fb1914955d0a0f302d  0x12345abcde
+    node cli/OpenZeppelin/scripts/delegatedAccessControlCLI.js testWrite -p 0x10e9a39581f929f090c6a43d11f6b519974410226e7d97fb1914955d0a0f302d  0x12345abcde
 
-    node api/OpenZeppelin/scripts/delegatedAccessControlCLI.js revokeRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+    node cli/OpenZeppelin/scripts/delegatedAccessControlCLI.js revokeRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
 
-    node api/OpenZeppelin/scripts/delegatedAccessControlCLI.js -p 0x10e9a39581f929f090c6a43d11f6b519974410226e7d97fb1914955d0a0f302d renounceRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
+    node cli/OpenZeppelin/scripts/delegatedAccessControlCLI.js -p 0x10e9a39581f929f090c6a43d11f6b519974410226e7d97fb1914955d0a0f302d renounceRole 0x2b8f168f361ac1393a163ed4adfa899a87be7b7c71645167bdaddd822ae453c8 fdCE5d73aFEa75cD646694d82900e8dB7641f8B6
 
