@@ -77,13 +77,13 @@ const startArgvCLI = () =>
     })
     .option("contractAddress", {
       alias: "ca",
-      default: "0x7C2EdB0E7CB6920b961b9a52b61fc17039181e6b",
+      // if not set process.env.CONTRACT_ACCOUNT_RULES will be used as the default
       describe: "AccountRules contract address",
       type: "string",
     })
     .option("adminContractAddress", {
       alias: "aca",
-      default: "0x225dc879f9E1B555dd29dA6A7a0687E8F0AB54d4",
+      // if not set process.env.CONTRACT_ADMIN will be used as the default
       describe: "Admin contract address",
       type: "string",
     })
@@ -142,11 +142,11 @@ async function main() {
   );
   const AccountRulesContract = await new web3.eth.Contract(
     contractJson.abi,
-    getHex(argv.contractAddress, 40, false, "contractAddress")
+    getHex(argv.contractAddress ? argv.contractAddress : process.env.CONTRACT_ACCOUNT_RULES, 40, false, "contractAddress")
   );
   const AdminContract = await new web3.eth.Contract(
     adminJson.abi,
-    getHex(argv.adminContractAddress, 40, false, "adminContractAddress")
+    getHex(argv.adminContractAddress ? argv.adminContractAddress : process.env.CONTRACT_ADMIN, 40, false, "adminContractAddress")
   );
 
   let transactionReceipt;

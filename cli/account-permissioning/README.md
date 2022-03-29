@@ -2,8 +2,6 @@ Account Permissiong CLI
 =======================
 All example commands are run from the top level directory. The network can be restricted to a read only mode - where only read operations (calls) are permitted, reads can be accessed by any account.
 
-Note that default values for the contract addresses, admin private key and chain id are commented out - supply these values via CLI options (--optionName value) or change the default values.
-
 Read methods
 ============
 

@@ -1,4 +1,5 @@
 const AllowlistUtils = require('../scripts/allowlist_utils');
+const fs = require("fs");
 
 const Admin = artifacts.require("./Admin.sol");
 
@@ -22,13 +23,14 @@ module.exports = async(deployer, network) => {
     console.log("   > Admin contract deployed with address = " + Admin.address);
 
     let instance = await Admin.deployed();
+    fs.writeFileSync('../contracts.env', 'export CONTRACT_ADMIN=' + instance.address + '\n');
 
     if(AllowlistUtils.isInitialAdminAccountsAvailable()) {
         console.log("   > Adding Initial Admin Accounts ...");
         let initialAdminAccounts = AllowlistUtils.getInitialAdminAccounts();
         if (initialAdminAccounts.length > 0) {
             let adminAddedResult = await instance.addAdmins(initialAdminAccounts);
-            console.log ("   > Initial admin accounts added : " + initialAdminAccounts); 
+            console.log ("   > Initial admin accounts added : " + initialAdminAccounts);
         }
     }
 
